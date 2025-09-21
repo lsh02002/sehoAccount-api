@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -41,7 +42,7 @@ public class Transaction extends BaseTimeEntity {
     private String note;
 
     @Column(nullable = false)
-    private LocalDate transactionDate;
+    private LocalDateTime transactionDate;
 
     @Column(length = 128, unique = true)
     private String dedupeKey;
