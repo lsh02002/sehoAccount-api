@@ -1,4 +1,4 @@
-package com.example.sehomallapi.web.advice;
+package com.sehoaccountapi.web.advice;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

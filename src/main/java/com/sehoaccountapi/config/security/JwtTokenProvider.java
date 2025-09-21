@@ -1,8 +1,8 @@
-package com.example.sehomallapi.config.security;
+package com.sehoaccountapi.config.security;
 
-import com.example.sehomallapi.config.redis.RedisUtil;
-import com.example.sehomallapi.repository.users.refreshToken.RefreshToken;
-import com.example.sehomallapi.repository.users.refreshToken.RefreshTokenRepository;
+import com.sehoaccountapi.config.redis.RedisUtil;
+import com.sehoaccountapi.repository.user.refreshToken.RefreshToken;
+import com.sehoaccountapi.repository.user.refreshToken.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

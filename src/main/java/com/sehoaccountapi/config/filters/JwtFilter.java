@@ -1,6 +1,6 @@
-package com.example.sehomallapi.config.filters;
+package com.sehoaccountapi.config.filters;
 
-import com.example.sehomallapi.config.security.JwtTokenProvider;
+import com.sehoaccountapi.config.security.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

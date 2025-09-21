@@ -1,6 +1,6 @@
-package com.example.sehomallapi.web.advice;
+package com.sehoaccountapi.web.advice;
 
-import com.example.sehomallapi.service.exceptions.*;
+import com.sehoaccountapi.service.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,7 +20,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN) //권한이 없을때
     public ResponseEntity<ErrorResponse> handleNotAccessDeniedException(AccessDeniedException ex) {
-        ErrorResponse errorRequestResponse = new ErrorResponse(403, "FORBIDDEN" ,  ex.getDetailMessage(), ex.getRequest());
+        ErrorResponse errorRequestResponse = new ErrorResponse(403, "FORBIDDEN", ex.getDetailMessage(), ex.getRequest());
         return new ResponseEntity<>(errorRequestResponse, HttpStatus.FORBIDDEN);
     }
 
@@ -48,6 +48,6 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(CustomBadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED) //비밀번호가 틀렸을때
     public ErrorResponse handleBadCredentialsException(CustomBadCredentialsException ex) {
-        return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(),HttpStatus.UNAUTHORIZED.name(), ex.getDetailMessage(), ex.getRequest());
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.name(), ex.getDetailMessage(), ex.getRequest());
     }
 }

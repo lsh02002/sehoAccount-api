@@ -1,4 +1,4 @@
-package com.example.sehomallapi.repository.users.userRoles;
+package com.sehoaccountapi.repository.user.userRoles;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

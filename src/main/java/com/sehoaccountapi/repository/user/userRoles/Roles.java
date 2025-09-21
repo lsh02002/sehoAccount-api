@@ -1,4 +1,4 @@
-package com.example.sehomallapi.repository.users.userRoles;
+package com.sehoaccountapi.repository.user.userRoles;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,6 +18,6 @@ public class Roles {
     @Column(name = "roles_id")
     private Integer rolesId;
 
-    @Column(name = "name",nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 }

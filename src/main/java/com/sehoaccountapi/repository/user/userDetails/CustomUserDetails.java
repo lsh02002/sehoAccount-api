@@ -1,4 +1,4 @@
-package com.example.sehomallapi.repository.users.userDetails;
+package com.sehoaccountapi.repository.user.userDetails;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,22 +24,13 @@ import java.util.stream.Collectors;
 public class CustomUserDetails implements UserDetails {
     @Getter
     private Long id;
-    @Getter
-    private String phoneNumber;
+
     @Getter
     private String nickname;
 
     @Getter
-    private String name;
-
-    @Getter
     private String email;
-    private String password;
 
-    @Getter
-    private String address;
-    @Getter
-    private String gender;
     @Getter
     private String userStatus;
 
@@ -51,18 +42,18 @@ public class CustomUserDetails implements UserDetails {
     private LocalDateTime birthDate;
 
     @Getter
-    @JsonProperty("createAt")
+    @JsonProperty("createdAt")
     @JsonSerialize(using = LocalDateTimeSerializer.class) // 직렬화 시 필요
     @JsonDeserialize(using = LocalDateTimeDeserializer.class) // 역직렬화 시 필요
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
     @Getter
-    @JsonProperty("deleteAt")
+    @JsonProperty("deletedAt")
     @JsonSerialize(using = LocalDateTimeSerializer.class) // 직렬화 시 필요
     @JsonDeserialize(using = LocalDateTimeDeserializer.class) // 역직렬화 시 필요
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    private LocalDateTime deleteAt;
+    private LocalDateTime deletedAt;
 
     private List<String> authorities;
 
@@ -75,7 +66,7 @@ public class CustomUserDetails implements UserDetails {
     @JsonIgnore
     @Override
     public String getPassword() {
-        return this.password;
+        return null;
     }
 
     @JsonIgnore

@@ -1,9 +1,9 @@
-package com.example.sehomallapi.service.exceptions;
+package com.sehoaccountapi.service.exceptions;
 
 import lombok.Getter;
 
 @Getter
-public class AccessDeniedException extends RuntimeException{
+public class AccessDeniedException extends RuntimeException {
     private final String detailMessage;
     private final Object request;
 

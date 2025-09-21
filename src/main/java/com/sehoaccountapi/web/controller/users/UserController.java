@@ -1,19 +1,17 @@
-package com.example.sehomallapi.web.controller.users;
+package com.sehoaccountapi.web.controller.users;
 
-import com.example.sehomallapi.config.RestPage;
-import com.example.sehomallapi.repository.users.userDetails.CustomUserDetails;
-import com.example.sehomallapi.service.exceptions.AccessDeniedException;
-import com.example.sehomallapi.service.exceptions.NotAcceptableException;
-import com.example.sehomallapi.service.users.UserService;
-import com.example.sehomallapi.web.dto.users.LoginRequest;
-import com.example.sehomallapi.web.dto.users.SignupRequest;
-import com.example.sehomallapi.web.dto.users.UserInfoResponse;
-import com.example.sehomallapi.web.dto.users.UserResponse;
-import com.example.sehomallapi.web.dto.users.userLoginHist.UserLoginHistResponse;
+import com.sehoaccountapi.config.RestPage;
+import com.sehoaccountapi.repository.user.userDetails.CustomUserDetails;
+import com.sehoaccountapi.service.exceptions.AccessDeniedException;
+import com.sehoaccountapi.service.exceptions.NotAcceptableException;
+import com.sehoaccountapi.service.users.UserService;
+import com.sehoaccountapi.web.dto.users.LoginRequest;
+import com.sehoaccountapi.web.dto.users.SignupRequest;
+import com.sehoaccountapi.web.dto.users.UserInfoResponse;
+import com.sehoaccountapi.web.dto.users.UserResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,12 +27,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<UserResponse> signUp(@RequestBody SignupRequest signupRequest){
+    public ResponseEntity<UserResponse> signUp(@RequestBody SignupRequest signupRequest) {
         return ResponseEntity.ok(userService.signUp(signupRequest));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
+    public ResponseEntity<UserResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         List<Object> accessTokenAndRefreshTokenAndResponse = userService.login(loginRequest, httpServletRequest);
         httpServletResponse.addHeader("accessToken", accessTokenAndRefreshTokenAndResponse.get(0).toString());
         httpServletResponse.addHeader("refreshToken", accessTokenAndRefreshTokenAndResponse.get(1).toString());
@@ -43,12 +41,12 @@ public class UserController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<UserResponse> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<UserResponse> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletRequest request, HttpServletResponse response) {
         return ResponseEntity.ok(userService.logout(customUserDetails.getEmail(), request, response));
     }
 
     @DeleteMapping("/withdrawal")
-    public ResponseEntity<UserResponse> withdrawal(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+    public ResponseEntity<UserResponse> withdrawal(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.ok(userService.withdrawal(customUserDetails.getEmail()));
     }
 
@@ -58,46 +56,41 @@ public class UserController {
     }
 
     @GetMapping("/is-nickname-existed/{nickname}")
-    public ResponseEntity<Boolean> isNicknameExisted(@PathVariable(name = "nickname") String nickname){
+    public ResponseEntity<Boolean> isNicknameExisted(@PathVariable(name = "nickname") String nickname) {
         return ResponseEntity.ok(userService.isNicknameExisted(nickname));
     }
 
     @GetMapping("/is-email-existed/{email}")
-    public ResponseEntity<Boolean> isEmailExisted(@PathVariable(name = "email") String email){
+    public ResponseEntity<Boolean> isEmailExisted(@PathVariable(name = "email") String email) {
         return ResponseEntity.ok(userService.isEmailExisted(email));
-    }
-
-    @GetMapping("/hist")
-    public ResponseEntity<RestPage<UserLoginHistResponse>> getUserLoginHist(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable) {
-        return ResponseEntity.ok(userService.getUserLoginHist(customUserDetails.getId(), pageable));
     }
 
     @GetMapping(value = "/entrypoint")
     public void entrypointException(@RequestParam(name = "accessToken", required = false) String token) {
-        if (token==null) throw new NotAcceptableException("로그인(Jwt 토큰)이 필요합니다.", null);
+        if (token == null) throw new NotAcceptableException("로그인(Jwt 토큰)이 필요합니다.", null);
         else throw new NotAcceptableException("로그인(Jwt 토큰)이 만료 되었습니다. 다시 로그인 하세요", null);
     }
 
     @GetMapping(value = "/access-denied")
     public void accessDeniedException(@RequestParam(name = "roles", required = false) String roles) {
-        if(roles==null) throw new AccessDeniedException("권한이 설정되지 않았습니다.",null);
-        else throw new AccessDeniedException("권한이 없습니다.", "시도한 유저의 권한 : "+roles);
+        if (roles == null) throw new AccessDeniedException("권한이 설정되지 않았습니다.", null);
+        else throw new AccessDeniedException("권한이 없습니다.", "시도한 유저의 권한 : " + roles);
     }
 
     @GetMapping("/test1")
-    public ResponseEntity<Object> test1(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+    public ResponseEntity<Object> test1(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.ok(customUserDetails.toString());
     }
 
     @GetMapping("/test2")
-    public ResponseEntity<String> test2(){
+    public ResponseEntity<String> test2() {
         return ResponseEntity.ok("Jwt 토큰이 상관없는 EntryPoint 테스트입니다.");
     }
 
     //관리자 모듈
 
     @PostMapping("/admin-login")
-    public ResponseEntity<UserResponse> adminLogin(@RequestBody LoginRequest loginRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
+    public ResponseEntity<UserResponse> adminLogin(@RequestBody LoginRequest loginRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         List<Object> accessTokenAndRefreshTokenAndResponse = userService.adminLogin(loginRequest, httpServletRequest);
         httpServletResponse.addHeader("accessToken", accessTokenAndRefreshTokenAndResponse.get(0).toString());
         httpServletResponse.addHeader("refreshToken", accessTokenAndRefreshTokenAndResponse.get(1).toString());
@@ -109,11 +102,5 @@ public class UserController {
     @GetMapping("/all-users-info")
     public ResponseEntity<RestPage<UserInfoResponse>> getAllUsersInfo(Pageable pageable) {
         return ResponseEntity.ok(userService.getAllUsersInfo(pageable));
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @GetMapping("/hist/{userId}")
-    public ResponseEntity<RestPage<UserLoginHistResponse>> getUserLoginHistByAdmin(@PathVariable Long userId, Pageable pageable) {
-        return ResponseEntity.ok(userService.getUserLoginHist(userId, pageable));
     }
 }

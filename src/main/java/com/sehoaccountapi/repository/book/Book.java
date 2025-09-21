@@ -1,29 +1,30 @@
-package com.example.ledger.domain.book;
+package com.sehoaccountapi.repository.book;
 
-import com.example.ledger.domain.category.Category;
-import com.example.ledger.domain.common.BaseTimeEntity;
-import com.example.ledger.domain.transaction.Transaction;
-import com.example.ledger.domain.user.User;
+import com.sehoaccountapi.repository.common.BaseTimeEntity;
+import com.sehoaccountapi.repository.transaction.Transaction;
+import com.sehoaccountapi.repository.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-@Table(name = "books", indexes = {
-        @Index(name = "idx_books_owner", columnList = "owner_id")
-})
+@Table(name = "books")
 public class Book extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(nullable = false)
     private String name;
@@ -34,8 +35,4 @@ public class Book extends BaseTimeEntity {
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Transaction> transactions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Category> categories = new ArrayList<>();
 }

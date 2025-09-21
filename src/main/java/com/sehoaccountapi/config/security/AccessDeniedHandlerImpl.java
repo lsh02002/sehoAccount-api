@@ -1,4 +1,4 @@
-package com.example.sehomallapi.config.security;
+package com.sehoaccountapi.config.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-        if(authorities.isEmpty()){
+        if (authorities.isEmpty()) {
             response.sendRedirect("/user/access-denied");
         } else {
             String auth = authorities.stream()

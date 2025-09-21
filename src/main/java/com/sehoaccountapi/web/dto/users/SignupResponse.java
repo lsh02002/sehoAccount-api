@@ -1,4 +1,4 @@
-package com.example.sehomallapi.web.dto.users;
+package com.sehoaccountapi.web.dto.users;
 
 import lombok.*;
 

@@ -1,9 +1,9 @@
-package com.example.sehomallapi.service.exceptions;
+package com.sehoaccountapi.service.exceptions;
 
 import lombok.Getter;
 
 @Getter
-public class NotFoundException extends RuntimeException{
+public class NotFoundException extends RuntimeException {
     private final String detailMessage;
     private final Object request;
 

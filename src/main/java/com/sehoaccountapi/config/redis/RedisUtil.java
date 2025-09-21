@@ -1,4 +1,4 @@
-package com.example.sehomallapi.config.redis;
+package com.sehoaccountapi.config.redis;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,6 +18,6 @@ public class RedisUtil {
     }
 
     public boolean hasKeyBlackList(String key) {
-        return Boolean.TRUE.equals(redisBlackListTemplate.hasKey(key));
+        return redisBlackListTemplate.hasKey(key);
     }
 }

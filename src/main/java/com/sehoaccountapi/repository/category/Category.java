@@ -1,27 +1,28 @@
-package com.example.ledger.domain.category;
+package com.sehoaccountapi.repository.category;
 
-import com.example.ledger.domain.book.Book;
-import com.example.ledger.domain.common.BaseTimeEntity;
+import com.sehoaccountapi.repository.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-@Table(name = "categories", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_category_book_name", columnNames = {"book_id", "name"})
-}, indexes = {
-        @Index(name = "idx_categories_book", columnList = "book_id")
-})
+@Table(name = "categories")
 public class Category extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Allow null for global categories if desired
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Category parent;
 
     @Column(nullable = false)
     private String name;

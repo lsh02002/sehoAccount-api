@@ -1,7 +1,10 @@
-package com.example.sehomallapi.web.dto.users;
+package com.sehoaccountapi.web.dto.users;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter

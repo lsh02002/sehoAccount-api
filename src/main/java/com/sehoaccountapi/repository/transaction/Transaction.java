@@ -1,24 +1,25 @@
-package com.example.ledger.domain.transaction;
+package com.sehoaccountapi.repository.transaction;
 
-import com.example.ledger.domain.book.Book;
-import com.example.ledger.domain.category.Category;
-import com.example.ledger.domain.common.BaseTimeEntity;
+import com.sehoaccountapi.repository.book.Book;
+import com.sehoaccountapi.repository.category.Category;
+import com.sehoaccountapi.repository.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-@Table(name = "transactions", indexes = {
-        @Index(name = "idx_tx_book_date", columnList = "book_id, transactionDate"),
-        @Index(name = "idx_tx_category", columnList = "category_id")
-})
+@Table(name = "transactions")
 public class Transaction extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

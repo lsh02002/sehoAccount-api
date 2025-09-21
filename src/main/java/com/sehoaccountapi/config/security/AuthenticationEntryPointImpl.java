@@ -1,4 +1,4 @@
-package com.example.sehomallapi.config.security;
+package com.sehoaccountapi.config.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,9 +13,9 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        if(request.getHeader("accessToken") != null){
+        if (request.getHeader("accessToken") != null) {
             response.sendRedirect("/user/entrypoint?accessToken=" + request.getHeader("accessToken"));
-        }else{
+        } else {
             response.sendRedirect("/user/entrypoint");
         }
     }

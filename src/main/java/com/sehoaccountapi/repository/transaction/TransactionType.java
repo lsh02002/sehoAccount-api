@@ -1,4 +1,4 @@
-package com.example.ledger.domain.transaction;
+package com.sehoaccountapi.repository.transaction;
 
 public enum TransactionType {
     INCOME, EXPENSE

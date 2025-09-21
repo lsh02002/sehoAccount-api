@@ -1,6 +1,6 @@
-package com.example.sehomallapi.repository.users.userRoles;
+package com.sehoaccountapi.repository.user.userRoles;
 
-import com.example.sehomallapi.repository.users.User;
+import com.sehoaccountapi.repository.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,10 +17,10 @@ public class UserRoles {
     @Column(name = "user_roles_id")
     private Integer userRolesId;
     @ManyToOne
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "role_id",nullable = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private Roles roles;
 }
