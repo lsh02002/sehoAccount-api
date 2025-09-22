@@ -13,13 +13,11 @@ import com.sehoaccountapi.service.exceptions.NotFoundException;
 import com.sehoaccountapi.web.dto.transactions.TransactionRequest;
 import com.sehoaccountapi.web.dto.transactions.TransactionResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +40,7 @@ public class TransactionService {
         Book book = bookRepository.findByUserIdAndId(userId, bookId)
                 .orElseThrow(()->new NotFoundException("해당 가계부를 찾을 수 없습니다.", bookId));
 
-        return transactionRepository.findByBookIdAndId(bookId, transactionId)
+        return transactionRepository.findByBookIdAndId(book.getId(), transactionId)
                 .map(this::convertToTransactionResponse)
                 .orElseThrow(()->new NotFoundException("해당 거래내역을 찾을 수 없습니다.", transactionId));
     }
@@ -73,9 +71,9 @@ public class TransactionService {
                 .dedupeKey(transactionRequest.getDedupeKey())
                 .build();
 
-        transactionRepository.save(transaction);
+        Transaction savedTransaction = transactionRepository.save(transaction);
 
-        return convertToTransactionResponse(transaction);
+        return convertToTransactionResponse(savedTransaction);
     }
 
     private TransactionResponse convertToTransactionResponse(Transaction transaction) {
