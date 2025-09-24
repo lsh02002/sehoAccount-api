@@ -9,6 +9,7 @@ import com.sehoaccountapi.repository.transaction.Transaction;
 import com.sehoaccountapi.repository.transaction.TransactionRepository;
 import com.sehoaccountapi.repository.transaction.TransactionType;
 import com.sehoaccountapi.service.exceptions.BadRequestException;
+import com.sehoaccountapi.service.exceptions.NotAcceptableException;
 import com.sehoaccountapi.service.exceptions.NotFoundException;
 import com.sehoaccountapi.web.dto.transactions.TransactionRequest;
 import com.sehoaccountapi.web.dto.transactions.TransactionResponse;
@@ -17,7 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +57,11 @@ public class TransactionService {
         Category category = categoryRepository.findById(transactionRequest.getCategoryId())
                 .orElseThrow(()->new NotFoundException("해당 카테고리를 찾을 수 없습니다.", transactionRequest.getCategoryId()));
 
-        if(transactionRequest.getAmount() == null) {
+        if(!validationDate(transactionRequest.getTransactionDate())) {
+            throw new BadRequestException("입력하신 날짜가 형식에 안 맞습니다.", null);
+        }
+
+        if(transactionRequest.getAmount() == null || transactionRequest.getAmount().intValue() == 0) {
             throw new BadRequestException("가격을 입력해주세요.", null);
         }
 
@@ -61,14 +69,27 @@ public class TransactionService {
             throw new BadRequestException("거래 타입을 입력해주세요.", null);
         }
 
+        if(!transactionRequest.getType().equals("INCOME") && !transactionRequest.getType().equals("EXPENSE")) {
+            throw new BadRequestException("거래 타입은 'INCOME' 이나 'EXPENSE' 이어야 합니다.", null);
+        }
+
+        String dedupeKey = book.getId() + "_" + transactionRequest.getAmount() + "_" + transactionRequest.getTransactionDate();
+
+        if(transactionRepository.existsByDedupeKey(dedupeKey))  {
+            throw new NotAcceptableException("입력이 이전 정보와 중복됩니다. : " + dedupeKey, dedupeKey);
+        }
+
+        Instant instant = Instant.parse(transactionRequest.getTransactionDate()); // ISO-8601 with Z/offset
+        LocalDateTime utc = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+
         Transaction transaction = Transaction.builder()
                 .book(book)
                 .category(category)
                 .amount(transactionRequest.getAmount())
                 .type(TransactionType.valueOf(transactionRequest.getType()))
                 .note(transactionRequest.getNote())
-                .transactionDate(LocalDateTime.now())
-                .dedupeKey(transactionRequest.getDedupeKey())
+                .transactionDate(utc)
+                .dedupeKey(dedupeKey)
                 .build();
 
         Transaction savedTransaction = transactionRepository.save(transaction);
@@ -80,12 +101,22 @@ public class TransactionService {
         return TransactionResponse.builder()
                 .id(transaction.getId())
                 .bookId(transaction.getBook().getId())
-                .categoryId(transaction.getCategory().getId())
+                .categoryName(transaction.getCategory().getName())
                 .amount(transaction.getAmount())
                 .type(transaction.getType().toString())
                 .note(transaction.getNote())
                 .transactionDate(transaction.getTransactionDate().toString())
                 .dedupeKey(transaction.getDedupeKey())
                 .build();
+    }
+
+    private boolean validationDate(String checkDate) {
+        try {
+            Instant instant = Instant.parse(checkDate); // ISO-8601 with Z/offset
+            LocalDateTime utc = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 }

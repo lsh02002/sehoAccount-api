@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class TransactionResponse {
     private Long id;
     private Long bookId;
-    private Long categoryId;
+    private String categoryName;
     private BigDecimal amount;
     private String type;
     private String note;

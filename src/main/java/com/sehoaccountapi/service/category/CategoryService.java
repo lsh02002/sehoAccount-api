@@ -3,14 +3,12 @@ package com.sehoaccountapi.service.category;
 import com.sehoaccountapi.repository.category.Category;
 import com.sehoaccountapi.repository.category.CategoryRepository;
 import com.sehoaccountapi.repository.category.CategoryType;
-import com.sehoaccountapi.service.exceptions.ConflictException;
+import com.sehoaccountapi.service.exceptions.BadRequestException;
 import com.sehoaccountapi.service.exceptions.NotFoundException;
 import com.sehoaccountapi.web.dto.categories.CategoryRequest;
 import com.sehoaccountapi.web.dto.categories.CategoryResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +27,8 @@ public class CategoryService {
         if(category.isEmpty()){
             categoryRepository.save(Category.builder()
                     .parent(null)
+                    .type(CategoryType.EXPENSE)
                     .name("ALL")
-                    .type(CategoryType.INCOME)
                     .build());
         }
     }
@@ -49,12 +47,17 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponse createCategory(CategoryRequest categoryRequest){
-        Category parent = categoryRepository.findCategoryByName(categoryRequest.getName())
-                .orElseThrow(()->new NotFoundException("Category not found", categoryRequest.getName()));
+        Category parent = categoryRepository.findById(categoryRequest.getParentId())
+                .orElseThrow(()->new NotFoundException("부모 카테고리를 찾을 수 없습니다.", categoryRequest.getParentId()));
+
+        if (!(categoryRequest.getType().equals("INCOME")
+                || categoryRequest.getType().equals("EXPENSE"))) {
+            throw new BadRequestException("분류 타입은 'INCOME' 과 'EXPENSE' 중 하나입니다.", null);
+        }
 
         Category category = Category.builder()
                 .name(categoryRequest.getName())
-                .type(categoryRequest.getType())
+                .type(CategoryType.valueOf(categoryRequest.getType()))
                 .parent(parent)
                 .build();
 
