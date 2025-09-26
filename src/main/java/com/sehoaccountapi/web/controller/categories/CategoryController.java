@@ -1,6 +1,5 @@
 package com.sehoaccountapi.web.controller.categories;
 
-import com.sehoaccountapi.repository.user.userDetails.CustomUserDetails;
 import com.sehoaccountapi.service.category.CategoryService;
 import com.sehoaccountapi.web.dto.categories.CategoryRequest;
 import com.sehoaccountapi.web.dto.categories.CategoryResponse;
@@ -27,13 +26,13 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest categoryRequest) {
         return ResponseEntity.ok(categoryService.createCategory(categoryRequest));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategoryById(@PathVariable(name = "id") Long id) {
         categoryService.deleteById(id);

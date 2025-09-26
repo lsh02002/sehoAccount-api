@@ -4,6 +4,7 @@ import com.sehoaccountapi.config.filters.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -47,6 +48,20 @@ public class SecurityConfig {
                 })
                 .authorizeHttpRequests(a ->
                         a
+                                .requestMatchers(HttpMethod.GET, "/api/books/**").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/api/books/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/api/books/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/api/books/**").authenticated()
+
+                                .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/categories/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").authenticated()
+
+                                .requestMatchers(HttpMethod.GET, "/api/transactions/**").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/api/transactions/**").authenticated()
+
+                                .requestMatchers(HttpMethod.GET, "/user/info/**", "/user/test1/**", "/user/all-users-info/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/user/**").authenticated()
                                 // 지정하지 않은 나머지는 Jwt 토큰이 상관없는 엔트리포인트입니다.
                                 .requestMatchers("/**").permitAll())
                 .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
