@@ -31,4 +31,9 @@ public class TransactionController {
     public ResponseEntity<TransactionResponse> createTransaction(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody TransactionRequest transactionRequest) {
         return ResponseEntity.ok(transactionService.createTransaction(customUserDetails.getId(), transactionRequest));
     }
+
+    @PutMapping("/{transactionId}")
+    public ResponseEntity<TransactionResponse> updateTransaction(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable(name = "transactionId") Long transactionId, @RequestBody TransactionRequest transactionRequest) {
+        return ResponseEntity.ok(transactionService.updateTransaction(customUserDetails.getId(), transactionId, transactionRequest));
+    }
 }

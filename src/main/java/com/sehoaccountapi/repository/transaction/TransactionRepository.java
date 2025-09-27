@@ -10,4 +10,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Page<Transaction> findByBookId(Long bookId, Pageable pageable);
     Optional<Transaction> findByBookIdAndId(Long bookId, Long id);
     boolean existsByDedupeKey(String dedupeKey);
+    boolean existsByDedupeKeyAndIdNot(String dedupeKey, Long id);
 }

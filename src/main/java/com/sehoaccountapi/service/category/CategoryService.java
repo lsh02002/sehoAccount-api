@@ -2,7 +2,7 @@ package com.sehoaccountapi.service.category;
 
 import com.sehoaccountapi.repository.category.Category;
 import com.sehoaccountapi.repository.category.CategoryRepository;
-import com.sehoaccountapi.repository.category.CategoryType;
+import com.sehoaccountapi.repository.transaction.TransactionType;
 import com.sehoaccountapi.service.exceptions.BadRequestException;
 import com.sehoaccountapi.service.exceptions.NotFoundException;
 import com.sehoaccountapi.web.dto.categories.CategoryRequest;
@@ -27,7 +27,7 @@ public class CategoryService {
         if(category.isEmpty()){
             categoryRepository.save(Category.builder()
                     .parent(null)
-                    .type(CategoryType.EXPENSE)
+                    .type(TransactionType.ALL)
                     .name("ALL")
                     .build());
         }
@@ -57,7 +57,7 @@ public class CategoryService {
 
         Category category = Category.builder()
                 .name(categoryRequest.getName())
-                .type(CategoryType.valueOf(categoryRequest.getType()))
+                .type(TransactionType.valueOf(categoryRequest.getType()))
                 .parent(parent)
                 .build();
 

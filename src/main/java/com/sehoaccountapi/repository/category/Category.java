@@ -1,6 +1,7 @@
 package com.sehoaccountapi.repository.category;
 
 import com.sehoaccountapi.repository.common.BaseTimeEntity;
+import com.sehoaccountapi.repository.transaction.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -29,5 +30,5 @@ public class Category extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
-    private CategoryType type; // INCOME / EXPENSE
+    private TransactionType type; // ALL/ INCOME / EXPENSE
 }

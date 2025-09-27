@@ -1,6 +1,5 @@
 package com.sehoaccountapi.web.dto.categories;
 
-import com.sehoaccountapi.repository.category.CategoryType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
