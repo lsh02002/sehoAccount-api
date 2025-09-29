@@ -2,8 +2,6 @@ package com.sehoaccountapi.web.controller.users;
 
 import com.sehoaccountapi.config.RestPage;
 import com.sehoaccountapi.repository.user.userDetails.CustomUserDetails;
-import com.sehoaccountapi.service.exceptions.AccessDeniedException;
-import com.sehoaccountapi.service.exceptions.NotAcceptableException;
 import com.sehoaccountapi.service.users.UserService;
 import com.sehoaccountapi.web.dto.users.LoginRequest;
 import com.sehoaccountapi.web.dto.users.SignupRequest;
@@ -13,12 +11,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -65,16 +66,34 @@ public class UserController {
         return ResponseEntity.ok(userService.isEmailExisted(email));
     }
 
-    @GetMapping(value = "/entrypoint")
-    public void entrypointException(@RequestParam(name = "accessToken", required = false) String token) {
-        if (token == null) throw new NotAcceptableException("로그인(Jwt 토큰)이 필요합니다.", null);
-        else throw new NotAcceptableException("로그인(Jwt 토큰)이 만료 되었습니다. 다시 로그인 하세요", null);
+    @GetMapping("/entrypoint")
+    public ResponseEntity<Map<String, String>> entrypoint(
+            @RequestParam(name = "accessToken", required = false) String token) {
+
+        String message = (token == null)
+                ? "로그인이 필요합니다."
+                : "로그인(JWT 토큰)이 만료되었습니다. 다시 로그인하세요.";
+
+        // 401 Unauthorized 로 통일 (권한 부족은 403)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", message, "path", "/user/entrypoint"));
     }
 
-    @GetMapping(value = "/access-denied")
-    public void accessDeniedException(@RequestParam(name = "roles", required = false) String roles) {
-        if (roles == null) throw new AccessDeniedException("권한이 설정되지 않았습니다.", null);
-        else throw new AccessDeniedException("권한이 없습니다.", "시도한 유저의 권한 : " + roles);
+    @GetMapping(value = "/access-denied", produces = "application/json;charset=UTF-8")
+    public ResponseEntity<Map<String, Object>> accessDeniedException(
+            @RequestParam(name = "roles", required = false) String roles,
+            HttpServletRequest request) {
+
+        String message = (roles == null)
+                ? "권한이 설정되지 않았습니다."
+                : "권한이 없습니다.";
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("message", message);
+        body.put("path", request.getRequestURI());
+        if (roles != null) body.put("roles", roles);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body); // 403
     }
 
     @GetMapping("/test1")
