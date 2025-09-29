@@ -30,6 +30,8 @@ import java.util.List;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationEntryPointImpl authenticationEntryPoint;
+    private final AccessDeniedHandlerImpl accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,8 +45,8 @@ public class SecurityConfig {
                 .cors(c -> c.configurationSource(corsConfigurationSource()))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(e -> {
-                    e.authenticationEntryPoint(new AuthenticationEntryPointImpl());
-                    e.accessDeniedHandler(new AccessDeniedHandlerImpl());
+                    e.authenticationEntryPoint(authenticationEntryPoint);
+                    e.accessDeniedHandler(accessDeniedHandler);
                 })
                 .authorizeHttpRequests(a ->
                         a
