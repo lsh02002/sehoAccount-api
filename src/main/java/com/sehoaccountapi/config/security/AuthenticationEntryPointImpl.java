@@ -12,14 +12,11 @@ import java.io.IOException;
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException authException
-    ) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write("{\"error\":\"unauthorized\",\"message\":\"Authentication required\"}");
-        response.getWriter().flush();
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+        if(request.getHeader("accessToken") != null){
+            response.sendRedirect("/user/entrypoint?accessToken=" + request.getHeader("accessToken"));
+        }else{
+            response.sendRedirect("/user/entrypoint");
+        }
     }
 }
