@@ -64,7 +64,8 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.PUT, "/api/transactions/**").authenticated()
 
                                 .requestMatchers(HttpMethod.GET, "/user/info/**", "/user/test1/**", "/user/all-users-info/**").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/user/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/user/logout/**", "/user/withdrawal/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/user/entrypoint/**", "/user/access-denied/**").permitAll()
                                 // 지정하지 않은 나머지는 Jwt 토큰이 상관없는 엔트리포인트입니다.
                                 .requestMatchers("/**").permitAll())
                 .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
