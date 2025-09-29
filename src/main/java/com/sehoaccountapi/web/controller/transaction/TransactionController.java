@@ -36,4 +36,10 @@ public class TransactionController {
     public ResponseEntity<TransactionResponse> updateTransaction(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable(name = "transactionId") Long transactionId, @RequestBody TransactionRequest transactionRequest) {
         return ResponseEntity.ok(transactionService.updateTransaction(customUserDetails.getId(), transactionId, transactionRequest));
     }
+
+    @DeleteMapping("/{bookId}/{transactionId}")
+    public ResponseEntity<?> deleteTransaction(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable(name = "bookId") Long bookId, @PathVariable(name = "transactionId") Long transactionId) {
+        transactionService.deleteTransaction(customUserDetails.getId(), bookId, transactionId);
+        return ResponseEntity.ok().build();
+    }
 }

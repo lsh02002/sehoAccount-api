@@ -9,11 +9,13 @@ import com.sehoaccountapi.repository.transaction.Transaction;
 import com.sehoaccountapi.repository.transaction.TransactionRepository;
 import com.sehoaccountapi.repository.transaction.TransactionType;
 import com.sehoaccountapi.service.exceptions.BadRequestException;
+import com.sehoaccountapi.service.exceptions.ConflictException;
 import com.sehoaccountapi.service.exceptions.NotAcceptableException;
 import com.sehoaccountapi.service.exceptions.NotFoundException;
 import com.sehoaccountapi.web.dto.transactions.TransactionRequest;
 import com.sehoaccountapi.web.dto.transactions.TransactionResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
@@ -151,7 +153,6 @@ public class TransactionService {
 
         TransactionType type = TransactionType.valueOf(transactionRequest.getType());
 
-// Convert to UTC view if needed
         LocalDateTime ldt = LocalDateTime.parse(transactionRequest.getTransactionDate(), koreanFormatter);
 
         if (!Objects.equals(transaction.getBook(), book)) transaction.setBook(book);
@@ -167,6 +168,19 @@ public class TransactionService {
         Transaction savedTransaction = transactionRepository.save(transaction);
 
         return convertToTransactionResponse(savedTransaction);
+    }
+
+    @Transactional
+    @CacheEvict(value = "transactions", key = "#transactionId")
+    public void deleteTransaction(Long userId, Long bookId, Long transactionId) {
+        try {
+            Book book = bookRepository.findByUserIdAndId(userId, bookId)
+                    .orElseThrow(()->new NotFoundException("해당 가계부를 찾을 수 없습니다.", bookId));
+
+            transactionRepository.deleteByBookIdAndId(book.getId(), transactionId);
+        } catch (ConflictException e) {
+            throw new ConflictException("거래 내역을 삭제하는데 실패했습니다.", transactionId);
+        }
     }
 
     private TransactionResponse convertToTransactionResponse(Transaction transaction) {

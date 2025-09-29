@@ -11,4 +11,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Optional<Transaction> findByBookIdAndId(Long bookId, Long id);
     boolean existsByDedupeKey(String dedupeKey);
     boolean existsByDedupeKeyAndIdNot(String dedupeKey, Long id);
+    void deleteByBookIdAndId(Long bookId, Long id);
 }
