@@ -50,21 +50,21 @@ public class SecurityConfig {
                 })
                 .authorizeHttpRequests(a ->
                         a
-                                .requestMatchers(HttpMethod.GET, "/api/books/**").authenticated()
-                                .requestMatchers(HttpMethod.POST, "/api/books/**").authenticated()
-                                .requestMatchers(HttpMethod.PUT, "/api/books/**").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/api/books/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/api/books/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.POST, "/api/books/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.PUT, "/api/books/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("USER")
 
                                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/categories/**").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("USER")
 
-                                .requestMatchers(HttpMethod.GET, "/api/transactions/**").authenticated()
-                                .requestMatchers(HttpMethod.POST, "/api/transactions/**").authenticated()
-                                .requestMatchers(HttpMethod.PUT, "/api/transactions/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/api/transactions/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.POST, "/api/transactions/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.PUT, "/api/transactions/**").hasRole("USER")
 
-                                .requestMatchers(HttpMethod.GET, "/user/info/**", "/user/test1/**", "/user/all-users-info/**").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/user/logout/**", "/user/withdrawal/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/user/info/**", "/user/test1/**", "/user/all-users-info/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.DELETE, "/user/logout/**", "/user/withdrawal/**").hasRole("USER")
                                 .requestMatchers(HttpMethod.GET, "/user/entrypoint/**", "/user/access-denied/**").permitAll()
                                 // 지정하지 않은 나머지는 Jwt 토큰이 상관없는 엔트리포인트입니다.
                                 .requestMatchers("/**").permitAll())
