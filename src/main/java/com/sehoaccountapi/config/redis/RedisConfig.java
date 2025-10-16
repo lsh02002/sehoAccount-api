@@ -17,6 +17,9 @@ import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
+    @Value("${spring.data.redis.prefix}")
+    private String redisKeyPrefix;
+
     @Value("${spring.data.redis.host}")
     public String host;
 
@@ -32,8 +35,26 @@ public class RedisConfig {
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(lettuceConnectionFactory());
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        // 기본 Serializer
+        StringRedisSerializer stringSerializer = new StringRedisSerializer();
+
+        // Prefix가 붙은 Key Serializer
+        StringRedisSerializer prefixedSerializer = new StringRedisSerializer() {
+            @Override
+            public byte[] serialize(String key) {
+                if (key == null) return null;
+                String prefixedKey = redisKeyPrefix + ":" + key;
+                return super.serialize(prefixedKey);
+            }
+        };
+
+        template.setKeySerializer(prefixedSerializer);
+        template.setHashKeySerializer(prefixedSerializer);
+        template.setValueSerializer(stringSerializer);
+        template.setHashValueSerializer(stringSerializer);
+
+        template.afterPropertiesSet();
 
         return template;
     }
