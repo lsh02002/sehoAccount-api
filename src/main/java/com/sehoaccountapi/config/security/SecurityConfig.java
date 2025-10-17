@@ -50,7 +50,6 @@ public class SecurityConfig {
                 })
                 .authorizeHttpRequests(a ->
                         a
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/books/**").hasRole("USER")
                                 .requestMatchers(HttpMethod.POST, "/api/books/**").hasRole("USER")
                                 .requestMatchers(HttpMethod.PUT, "/api/books/**").hasRole("USER")
@@ -84,7 +83,7 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of("*"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
-        corsConfiguration.setExposedHeaders(List.of("accesstoken", "refreshtoken"));
+        corsConfiguration.setExposedHeaders(List.of("accessToken", "refreshToken"));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS"));
         corsConfiguration.setMaxAge(1000L * 60 * 60);
 
