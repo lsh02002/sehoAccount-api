@@ -50,6 +50,7 @@ public class SecurityConfig {
                 })
                 .authorizeHttpRequests(a ->
                         a
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/books/**").hasRole("USER")
                                 .requestMatchers(HttpMethod.POST, "/api/books/**").hasRole("USER")
                                 .requestMatchers(HttpMethod.PUT, "/api/books/**").hasRole("USER")
