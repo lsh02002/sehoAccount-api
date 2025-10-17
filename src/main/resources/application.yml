@@ -30,7 +30,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
 server:
-  port: 8090
+  port: 8110
   error:
     include-exception: true     # ??? exception? ??? ???? ??
     path: '/error'               # ??? ??? Handler? ??
