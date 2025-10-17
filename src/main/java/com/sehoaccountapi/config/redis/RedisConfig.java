@@ -17,9 +17,6 @@ import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
-    @Value("${spring.data.redis.prefix}")
-    private String redisKeyPrefix;
-
     @Value("${spring.data.redis.host}")
     public String host;
 
@@ -32,40 +29,31 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory cf) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(lettuceConnectionFactory());
+        template.setConnectionFactory(cf);
 
-        // 기본 Serializer
-        StringRedisSerializer stringSerializer = new StringRedisSerializer();
-
-        // Prefix가 붙은 Key Serializer
-        StringRedisSerializer prefixedSerializer = new StringRedisSerializer() {
-            @Override
-            public byte[] serialize(String key) {
-                if (key == null) return null;
-                String prefixedKey = redisKeyPrefix + ":" + key;
-                return super.serialize(prefixedKey);
-            }
-        };
-
-        template.setKeySerializer(prefixedSerializer);
-        template.setHashKeySerializer(prefixedSerializer);
-        template.setValueSerializer(stringSerializer);
-        template.setHashValueSerializer(stringSerializer);
+        StringRedisSerializer string = new StringRedisSerializer();
+        template.setKeySerializer(string);        // << prefix 붙이지 않음
+        template.setHashKeySerializer(string);
+        template.setValueSerializer(string);
+        template.setHashValueSerializer(string);
 
         template.afterPropertiesSet();
-
         return template;
     }
 
     @Bean
-    public CacheManager contentCacheManager(RedisConnectionFactory cf) {
-        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+    public CacheManager contentCacheManager(RedisConnectionFactory cf,
+                                            @Value("account") String prefix) {
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                // 캐시 키 직렬화기: prefix 없는 일반 직렬화기
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())) // Value Serializer 변경
-                .entryTtl(Duration.ofHours(3L)); // 캐시 수명 3시간
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                .entryTtl(Duration.ofHours(3))
+                // 여기서만 통일해서 붙임: account:<cacheName>:
+                .computePrefixWith(cacheName -> prefix + ":" + cacheName + ":");
 
-        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(cf).cacheDefaults(redisCacheConfiguration).build();
+        return RedisCacheManager.builder(cf).cacheDefaults(config).build();
     }
 }
