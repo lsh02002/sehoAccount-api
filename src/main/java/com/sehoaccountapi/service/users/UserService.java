@@ -3,6 +3,8 @@ package com.sehoaccountapi.service.users;
 import com.sehoaccountapi.config.RestPage;
 import com.sehoaccountapi.config.redis.RedisUtil;
 import com.sehoaccountapi.config.security.JwtTokenProvider;
+import com.sehoaccountapi.repository.book.Book;
+import com.sehoaccountapi.repository.book.BookRepository;
 import com.sehoaccountapi.repository.user.User;
 import com.sehoaccountapi.repository.user.UserRepository;
 import com.sehoaccountapi.repository.user.refreshToken.RefreshToken;
@@ -43,6 +45,7 @@ public class UserService {
     private final RedisUtil redisUtil;
 
     private final PasswordEncoder passwordEncoder;
+    private final BookRepository bookRepository;
 
     private static String getClientIP(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
@@ -128,11 +131,17 @@ public class UserService {
                 .userStatus("정상")
                 .build();
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
         userRolesRepository.save(UserRoles.builder()
                 .user(user)
                 .roles(roles)
+                .build());
+
+        bookRepository.save(Book.builder()
+                        .user(savedUser)
+                        .name(signupRequest.getNickname() + "의 가계부")
+                        .description(signupRequest.getNickname() + "의 가계부")
                 .build());
 
         SignupResponse signupResponse = SignupResponse.builder()
