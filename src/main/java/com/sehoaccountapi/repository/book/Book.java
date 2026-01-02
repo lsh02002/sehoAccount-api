@@ -23,7 +23,7 @@ public class Book extends BaseTimeEntity {
     private Long id;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User user;
 
     @Column(nullable = false)

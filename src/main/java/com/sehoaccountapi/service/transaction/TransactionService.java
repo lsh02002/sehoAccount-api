@@ -50,11 +50,11 @@ public class TransactionService {
                 .orElseThrow(() -> new NotFoundException("해당 가계부를 찾을 수 없습니다.", bookId));
 
         return new RestPage<>(transactionRepository.findByBookId(book.getId(), pageable)
-                .map(self::getTransaction));
+                .map(transaction -> self.getTransaction(userId, bookId, transaction.getId(), transaction)));
     }
 
     @Transactional
-    @Cacheable(value = "transactions", key = "#transactionId")
+    @Cacheable(value = "transactions", key = "'user:' + #userId + ':book:' + #bookId + ':trans:' + #transactionId")
     public TransactionResponse getTransactionById(Long userId, Long bookId, Long transactionId) {
         Book book = bookRepository.findByUserIdAndId(userId, bookId)
                 .orElseThrow(() -> new NotFoundException("해당 가계부를 찾을 수 없습니다.", bookId));
@@ -64,13 +64,13 @@ public class TransactionService {
                 .orElseThrow(() -> new NotFoundException("해당 거래내역을 찾을 수 없습니다.", transactionId));
     }
 
-    @Cacheable(value = "transactions", key = "#transaction.id")
-    public TransactionResponse getTransaction(Transaction transaction) {
+    @Cacheable(value = "transactions", key = "'user:' + #userId + ':book:' + #bookId + ':trans:' + #transactionId")
+    public TransactionResponse getTransaction(Long userId, Long bookId, Long transactionId, Transaction transaction) {
         return convertToTransactionResponse(transaction);
     }
 
     @Transactional
-    @CachePut(value = "transactions", key = "#result.id")
+    @CachePut(value = "transactions", key = "'user:' + #userId + ':book:' + #result.bookId + ':trans:' + #result.id")
     public TransactionResponse createTransaction(Long userId, TransactionRequest transactionRequest) {
         Book book = bookRepository.findByUserIdAndId(userId, transactionRequest.getBookId())
                 .orElseThrow(() -> new NotFoundException("해당 가계부를 찾을 수 없습니다.", transactionRequest.getBookId()));
@@ -118,7 +118,7 @@ public class TransactionService {
     }
 
     @Transactional
-    @CachePut(value = "transactions", key = "#transactionId")
+    @CachePut(value = "transactions", key = "'user:' + #userId + ':book:' + #transactionRequest.bookId + ':trans:' + #result.id")
     public TransactionResponse updateTransaction(Long userId, Long transactionId, TransactionRequest transactionRequest) {
         Book book = bookRepository.findByUserIdAndId(userId, transactionRequest.getBookId())
                 .orElseThrow(() -> new NotFoundException("해당 가계부를 찾을 수 없습니다.", transactionRequest.getBookId()));
@@ -171,7 +171,7 @@ public class TransactionService {
     }
 
     @Transactional
-    @CacheEvict(value = "transactions", key = "#transactionId")
+    @CacheEvict(value = "transactions", key = "'user:' + #userId + ':book:' + #bookId + ':trans:' + #transactionId")
     public void deleteTransaction(Long userId, Long bookId, Long transactionId) {
         try {
             Book book = bookRepository.findByUserIdAndId(userId, bookId)

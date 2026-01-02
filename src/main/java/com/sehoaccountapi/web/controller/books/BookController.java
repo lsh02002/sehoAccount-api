@@ -18,8 +18,8 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping("/user")
-    public ResponseEntity<RestPage<BookResponse>> getAllBooks(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable) {
-        return ResponseEntity.ok(bookService.getAllBooksByUser(customUserDetails.getId(), pageable));
+    public ResponseEntity<BookResponse> getBookByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.ok(bookService.getBookByUser(customUserDetails.getId()));
     }
 
     @GetMapping("/{id}")
@@ -27,10 +27,10 @@ public class BookController {
         return ResponseEntity.ok(bookService.getBookById(customUserDetails.getId(), id));
     }
 
-    @PostMapping
-    public ResponseEntity<BookResponse> addBook(@AuthenticationPrincipal CustomUserDetails customUserDetails,@RequestBody BookRequest bookRequest) {
-        return ResponseEntity.ok(bookService.addBook(customUserDetails.getId(), bookRequest));
-    }
+//    @PostMapping
+//    public ResponseEntity<BookResponse> addBook(@AuthenticationPrincipal CustomUserDetails customUserDetails,@RequestBody BookRequest bookRequest) {
+//        return ResponseEntity.ok(bookService.addBook(customUserDetails.getId(), bookRequest));
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<BookResponse> modifyBook(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable(name = "id") Long bookId, @RequestBody BookRequest bookRequest) {

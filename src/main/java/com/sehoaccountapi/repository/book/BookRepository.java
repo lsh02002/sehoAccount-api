@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
-    Page<Book> findByUserId(Long userId, Pageable pageable);
+    Optional<Book> findByUserId(Long userId);
     Optional<Book> findByUserIdAndId(Long userId, Long bookId);
     void deleteByUserIdAndId(Long userId, Long bookId);
 }
