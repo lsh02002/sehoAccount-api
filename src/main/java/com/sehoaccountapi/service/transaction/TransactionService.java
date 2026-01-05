@@ -50,7 +50,7 @@ public class TransactionService {
                 .orElseThrow(() -> new NotFoundException("해당 가계부를 찾을 수 없습니다.", bookId));
 
         return new RestPage<>(transactionRepository.findByBookId(book.getId(), pageable)
-                .map(transaction -> self.getTransaction(userId, bookId, transaction.getId(), transaction)));
+                .map(transaction -> self.getTransaction(userId, bookId, transaction)));
     }
 
     @Transactional
@@ -64,8 +64,8 @@ public class TransactionService {
                 .orElseThrow(() -> new NotFoundException("해당 거래내역을 찾을 수 없습니다.", transactionId));
     }
 
-    @Cacheable(value = "transactions", key = "'user:' + #userId + ':book:' + #bookId + ':trans:' + #transactionId")
-    public TransactionResponse getTransaction(Long userId, Long bookId, Long transactionId, Transaction transaction) {
+    @Cacheable(value = "transactions", key = "'user:' + #userId + ':book:' + #bookId + ':trans:' + #transaction.id")
+    public TransactionResponse getTransaction(Long userId, Long bookId, Transaction transaction) {
         return convertToTransactionResponse(transaction);
     }
 
